@@ -13,8 +13,9 @@ class PRJ_API USessionData : public UObject
 {
 	GENERATED_BODY()
 
-public:
 	USessionData();
+
+public:
 	~USessionData();
 
 	UPROPERTY(Category = WebSocket, VisibleAnywhere, BlueprintReadOnly)

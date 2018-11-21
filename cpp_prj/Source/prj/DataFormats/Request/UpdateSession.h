@@ -14,9 +14,9 @@ class PRJ_API UUpdateSession : public UCommand
 {
 	GENERATED_BODY()
 			
-public:
-
 	UUpdateSession();
+
+public:
 	~UUpdateSession();
 
 	UPROPERTY(Category = WebSocket, VisibleAnywhere, BlueprintReadOnly)
@@ -26,5 +26,5 @@ public:
 	class USessionData* parameters;
 
 public:
-	UUpdateSession* Create(int32 sessionID, USessionData* parameters);
+	static UUpdateSession* Create(int32 sessionID, USessionData* parameters);
 };

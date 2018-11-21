@@ -12,9 +12,11 @@ UCLASS(BlueprintType)
 class PRJ_API UCommand : public UObject
 {
 	GENERATED_BODY()
+
+protected:
+	UCommand() {}
 		
 public:
-	UCommand() {}
 	~UCommand() {}
 
 	UPROPERTY(Category = WebSocket, VisibleAnywhere, BlueprintReadOnly)

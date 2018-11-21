@@ -13,9 +13,10 @@ UCLASS(BlueprintType)
 class PRJ_API UCreateSession : public UCommand
 {
 	GENERATED_BODY()
-			
-public:
+
 	UCreateSession();
+
+public:
 	~UCreateSession();
 
 	UPROPERTY(Category = WebSocket, VisibleAnywhere, BlueprintReadOnly)

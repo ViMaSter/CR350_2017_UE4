@@ -58,6 +58,8 @@ public:
 	UPROPERTY(Category = Websocket, EditAnywhere, BlueprintReadWrite)
 	float UpdateFrequencyInSeconds;
 
+	int32 CurrentSessionID;
+
 	// Begin Actor Interface
 	virtual void Tick(float DeltaSeconds) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
@@ -84,8 +86,7 @@ public:
 	UFUNCTION()
 	virtual void OnError(const FString& errorMessage) const;
 	UFUNCTION()
-	virtual void OnMessage(const FString& data) const;
-	void ParseToClass(TSharedPtr<FJsonObject> jsonObject) const;
+	virtual void OnMessage(const FString& data);
 	UFUNCTION()
 	void NetworkTick() const;
 	// End Actor Interface

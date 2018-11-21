@@ -15,6 +15,9 @@
 
 #include "WebSocketBlueprintLibrary.h"
 #include "DataFormats/Request/CreateSession.h"
+#include "DataFormats/Request/UpdateSession.h"
+#include "DataFormats/Response/SessionJoin.h"
+#include "DataFormats/Response/SessionUpdate.h"
 #include "DataFormats/SessionData.h"
 
 const FName AprjPawn::MoveForwardBinding("MoveForward");
@@ -59,6 +62,7 @@ AprjPawn::AprjPawn()
 	Hostname = "127.0.0.1";
 	Port = 7000;
 	UpdateFrequencyInSeconds = 1.0f;
+	CurrentSessionID = -1;
 }
 
 void AprjPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
@@ -200,7 +204,7 @@ void AprjPawn::OnError(const FString& errorMessage) const
 
 }
 
-void AprjPawn::OnMessage(const FString& data) const
+void AprjPawn::OnMessage(const FString& data)
 {
 	UE_LOG(LogWindows, Warning, TEXT("Received websocket data: '%s'"), *data);
 
@@ -214,6 +218,24 @@ void AprjPawn::OnMessage(const FString& data) const
 		UE_LOG(LogWindows, Warning, TEXT("Unable to parse json: '%s'"), *data);
 		return;
 	}
+
+	const FString command = JsonObject->GetStringField("command");
+	if (command.Equals("sessionJoin"))
+	{
+		USessionJoin* sessionJoin = Cast<USessionJoin>(UWebSocketBlueprintLibrary::JsonToObject(data, USessionJoin::StaticClass(), true));
+		UE_LOG(LogWindows, Warning, TEXT("Received join: sessionID: %d, x: %f, y: %f"), sessionJoin->sessionID, sessionJoin->session->playerPositionX, sessionJoin->session->playerPositionY);
+		
+		CurrentSessionID = sessionJoin->sessionID;
+	}
+	else if (command.Equals("sessionUpdate"))
+	{
+		USessionUpdate* sessionUpdate = Cast<USessionUpdate>(UWebSocketBlueprintLibrary::JsonToObject(data, USessionUpdate::StaticClass(), true));
+		UE_LOG(LogWindows, Warning, TEXT("Received update: sessionID: %d, x: %f, y: %f"), sessionUpdate->sessionID, sessionUpdate->session->playerPositionX, sessionUpdate->session->playerPositionY);
+	}
+	else
+	{
+		UE_LOG(LogWindows, Warning, TEXT("Received unhandled command: %s"), *command);
+	}
 }
 
 void AprjPawn::NetworkTick() const
@@ -222,7 +244,7 @@ void AprjPawn::NetworkTick() const
 	UE_LOG(LogWindows, Warning, TEXT("Network tick"));
 
 	FString resultString;
-	UWebSocketBlueprintLibrary::ObjectToJson(UCreateSession::Create(USessionData::Create(currentLocation.X, currentLocation.Y, 90.0f)), resultString);
+	UWebSocketBlueprintLibrary::ObjectToJson(UUpdateSession::Create(CurrentSessionID, USessionData::Create(currentLocation.X, currentLocation.Y, 90.0f)), resultString);
 	SendNetworkMessage(resultString);
 }
 
