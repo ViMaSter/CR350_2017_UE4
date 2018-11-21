@@ -14,6 +14,8 @@
 #include "Sound/SoundBase.h"
 
 #include "WebSocketBlueprintLibrary.h"
+#include "DataFormats/Request/CreateSession.h"
+#include "DataFormats/SessionData.h"
 
 const FName AprjPawn::MoveForwardBinding("MoveForward");
 const FName AprjPawn::MoveRightBinding("MoveRight");
@@ -186,7 +188,10 @@ void AprjPawn::OnOpen()
 	FTimerDynamicDelegate NetworkTickDelegate;
 	NetworkTickDelegate.BindUFunction(this, "NetworkTick");
 	GetWorld()->GetTimerManager().SetTimer(WebUpdateTimerHandle, NetworkTickDelegate, UpdateFrequencyInSeconds, true);
-	SendNetworkMessage(FString(TEXT("{\"command\":\"createSession\",\"parameters\": {\"playerPositionX\":40,\"playerPositionY\":50,\"health\":60}}")));
+
+	FString resultString;
+	UWebSocketBlueprintLibrary::ObjectToJson(UCreateSession::Create(USessionData::Create(70.0f, 80.0f, 90.0f)), resultString);
+	SendNetworkMessage(resultString);
 }
 
 void AprjPawn::OnError(const FString& errorMessage) const
@@ -213,14 +218,11 @@ void AprjPawn::OnMessage(const FString& data) const
 
 void AprjPawn::NetworkTick() const
 {
-	UE_LOG(LogWindows, Warning, TEXT("Network tick"));
 	const FVector currentLocation = GetActorLocation();
-	SendNetworkMessage(
-		FString::Printf(
-			TEXT("{\"command\":\"updateSession\",\"sessionID\":0,\"parameters\": {\"playerPositionX\":%f,\"playerPositionY\":%f,\"health\":30}}"),
-			currentLocation.X,
-			currentLocation.Y
-		)
-	);
+	UE_LOG(LogWindows, Warning, TEXT("Network tick"));
+
+	FString resultString;
+	UWebSocketBlueprintLibrary::ObjectToJson(UCreateSession::Create(USessionData::Create(currentLocation.X, currentLocation.Y, 90.0f)), resultString);
+	SendNetworkMessage(resultString);
 }
 

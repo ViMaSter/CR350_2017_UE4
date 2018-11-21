@@ -2,14 +2,21 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "Object.h"
+#include "Command.generated.h"
 
 /**
  * 
  */
-class PRJ_API command
+UCLASS(BlueprintType)
+class PRJ_API UCommand : public UObject
 {
+	GENERATED_BODY()
+		
 public:
-	command();
-	~command();
+	UCommand() {}
+	~UCommand() {}
+
+	UPROPERTY(Category = WebSocket, VisibleAnywhere, BlueprintReadOnly)
+	FString command;
 };
