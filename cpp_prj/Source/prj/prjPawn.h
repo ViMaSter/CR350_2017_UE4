@@ -94,7 +94,7 @@ public:
 private:
 
 	// UEWebsocket websocketConnection;
-	TWeakObjectPtr<UWebSocketBase> websocketContext;
+	class UWebSocketBase* websocketContext;
 	FTimerHandle WebUpdateTimerHandle;
 
 	/* Flag to control firing  */

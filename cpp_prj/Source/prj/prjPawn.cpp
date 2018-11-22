@@ -160,7 +160,7 @@ void AprjPawn::SetupWebsocket()
 {
 	FString URI = FString::Printf(TEXT("ws://%s:%d/"), *Hostname, Port);
 	UE_LOG(LogWindows, Warning, TEXT("Attempting to connect to '%s'"), *URI);
-	websocketContext = TWeakObjectPtr<UWebSocketBase>(UWebSocketBlueprintLibrary::Connect(URI));
+	websocketContext = UWebSocketBlueprintLibrary::Connect(URI);
 
 	FScriptDelegate OnConnectDelegate;
 	OnConnectDelegate.BindUFunction(this, "OnOpen");
@@ -177,7 +177,7 @@ void AprjPawn::SetupWebsocket()
 
 void AprjPawn::SendNetworkMessage(const FString& data) const
 {
-	if (!websocketContext.IsValid())
+	if (!websocketContext)
 	{
 		UE_LOG(LogWindows, Warning, TEXT("Attempting to send the following message without a valid connection: '%s'"), *data);
 		return;
