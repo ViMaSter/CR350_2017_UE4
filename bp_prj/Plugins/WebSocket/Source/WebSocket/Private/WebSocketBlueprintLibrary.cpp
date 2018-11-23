@@ -24,6 +24,7 @@
 #include "WebSocketBlueprintLibrary.h"
 #include "Runtime/Launch/Resources/Version.h"
 
+#include "Policies/CondensedJsonPrintPolicy.h"
 
 
 TSharedPtr<UWebSocketContext> s_websocketCtx;
@@ -119,7 +120,7 @@ bool UWebSocketBlueprintLibrary::ObjectToJson(UObject* Object, FString& data)
 		return false;
 	}
 
-	TSharedRef<TJsonWriter<TCHAR, TPrettyJsonPrintPolicy<TCHAR> > > JsonWriter = TJsonWriterFactory<TCHAR, TPrettyJsonPrintPolicy<TCHAR> >::Create(&data, 0);
+	TSharedRef<TJsonWriter<TCHAR, TCondensedJsonPrintPolicy<TCHAR> > > JsonWriter = TJsonWriterFactory<TCHAR, TCondensedJsonPrintPolicy<TCHAR> >::Create(&data, 0);
 	bool bSuccess = FJsonSerializer::Serialize(JsonObject, JsonWriter);
 	JsonWriter->Close();
 
