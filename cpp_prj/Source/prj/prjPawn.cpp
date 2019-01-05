@@ -15,7 +15,7 @@
 
 #include "WebSocketBlueprintLibrary.h"
 #include "DataFormats/Request/CreateSession.h"
-#include "DataFormats/Request/UpdateSession.h"
+#include "DataFormats/Request/UpdatePlayer.h"
 #include "DataFormats/Response/SessionJoin.h"
 #include "DataFormats/Response/SessionUpdate.h"
 #include "DataFormats/SessionData.h"
@@ -194,7 +194,7 @@ void AprjPawn::OnOpen()
 	GetWorld()->GetTimerManager().SetTimer(WebUpdateTimerHandle, NetworkTickDelegate, UpdateFrequencyInSeconds, true);
 
 	FString resultString;
-	UWebSocketBlueprintLibrary::ObjectToJson(UCreateSession::Create(USessionData::Create(70.0f, 80.0f, 90.0f)), resultString);
+	UWebSocketBlueprintLibrary::ObjectToJson(UCreateSession::Create(USessionData::Create("Sand Castle", 3 * 60 * 1000, 12345), UPlayerData::Create("UE4 Player", 1.0f, 2.0f, 0x3F7AF3)), resultString);
 	SendNetworkMessage(resultString);
 }
 
@@ -223,14 +223,14 @@ void AprjPawn::OnMessage(const FString& data)
 	if (command.Equals("sessionJoin"))
 	{
 		USessionJoin* sessionJoin = Cast<USessionJoin>(UWebSocketBlueprintLibrary::JsonToObject(data, USessionJoin::StaticClass(), true));
-		UE_LOG(LogWindows, Warning, TEXT("Received join: sessionID: %d, x: %f, y: %f"), sessionJoin->sessionID, sessionJoin->session->playerPositionX, sessionJoin->session->playerPositionY);
+		UE_LOG(LogWindows, Warning, TEXT("Received join: sessionID: %d, x: %f, y: %f"), sessionJoin->sessionID, sessionJoin->player->position->GetX(), sessionJoin->player->position->GetY());
 		
 		CurrentSessionID = sessionJoin->sessionID;
 	}
 	else if (command.Equals("sessionUpdate"))
 	{
 		USessionUpdate* sessionUpdate = Cast<USessionUpdate>(UWebSocketBlueprintLibrary::JsonToObject(data, USessionUpdate::StaticClass(), true));
-		UE_LOG(LogWindows, Warning, TEXT("Received update: sessionID: %d, x: %f, y: %f"), sessionUpdate->sessionID, sessionUpdate->session->playerPositionX, sessionUpdate->session->playerPositionY);
+		UE_LOG(LogWindows, Warning, TEXT("Received update: x: %f, y: %f"), sessionUpdate->player->position->GetX(), sessionUpdate->player->position->GetY());
 	}
 	else
 	{
@@ -244,7 +244,7 @@ void AprjPawn::NetworkTick() const
 	UE_LOG(LogWindows, Warning, TEXT("Network tick"));
 
 	FString resultString;
-	UWebSocketBlueprintLibrary::ObjectToJson(UUpdateSession::Create(CurrentSessionID, USessionData::Create(currentLocation.X, currentLocation.Y, 90.0f)), resultString);
+	UWebSocketBlueprintLibrary::ObjectToJson(UUpdatePlayer::Create(UPlayerData::Create("UE4 Player", currentLocation.X, currentLocation.Y, 0x3F7AF3)), resultString);
 	SendNetworkMessage(resultString);
 }
 

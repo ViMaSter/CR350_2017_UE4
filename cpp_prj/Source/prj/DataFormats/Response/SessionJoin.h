@@ -4,6 +4,7 @@
 
 #include "DataFormats/Command.h"
 #include "DataFormats/SessionData.h"
+#include "DataFormats/PlayerData.h"
 #include "SessionJoin.generated.h"
 
 /**
@@ -24,4 +25,7 @@ public:
 
 	UPROPERTY(Category = WebSocket, VisibleAnywhere, BlueprintReadOnly)
 	class USessionData* session;
+
+	UPROPERTY(Category = WebSocket, VisibleAnywhere, BlueprintReadOnly)
+	class UPlayerData* player;
 };

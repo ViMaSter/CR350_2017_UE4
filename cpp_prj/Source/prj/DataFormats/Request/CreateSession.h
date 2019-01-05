@@ -4,6 +4,7 @@
 
 #include "DataFormats/Command.h"
 #include "DataFormats/SessionData.h"
+#include "DataFormats/PlayerData.h"
 #include "CreateSession.generated.h"
 
 /**
@@ -20,8 +21,10 @@ public:
 	~UCreateSession();
 
 	UPROPERTY(Category = WebSocket, VisibleAnywhere, BlueprintReadOnly)
-	class USessionData* parameters;
+	class USessionData* session;
+	UPROPERTY(Category = WebSocket, VisibleAnywhere, BlueprintReadOnly)
+	class UPlayerData* player;
 
 public:
-	static UCreateSession* Create(USessionData* parameters);
+	static UCreateSession* Create(USessionData* session, UPlayerData* player);
 };

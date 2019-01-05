@@ -13,19 +13,28 @@ class PRJ_API USessionData : public UObject
 {
 	GENERATED_BODY()
 
-	USessionData();
+	USessionData() {}
 
 public:
-	~USessionData();
+	~USessionData() {}
 
 	UPROPERTY(Category = WebSocket, VisibleAnywhere, BlueprintReadOnly)
-	float playerPositionX;
+	FString mapName;
 
+	// int32 due to constraints with using uint + 64-bit integers in blueprint
 	UPROPERTY(Category = WebSocket, VisibleAnywhere, BlueprintReadOnly)
-	float playerPositionY;
+	int32 timelimit;
 
+	// int32 due to constraints with using uint + 64-bit integers in blueprint
 	UPROPERTY(Category = WebSocket, VisibleAnywhere, BlueprintReadOnly)
-	float health;
+	int32 currentMatchStart;
 
-	static USessionData* Create(float playerPositionX, float playerPositionY, float health);
+	static USessionData* Create(FString mapName, int32 timelimit, int32 currentMatchStart)
+	{
+		USessionData* newObject(NewObject<USessionData>());
+		newObject->mapName = mapName;
+		newObject->timelimit = timelimit;
+		newObject->currentMatchStart = currentMatchStart;
+		return newObject;
+	}
 };

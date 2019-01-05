@@ -15,10 +15,10 @@ UUpdateSession::~UUpdateSession()
 	// intentionally void
 }
 
-UUpdateSession* UUpdateSession::Create(int32 sessionID, USessionData* parameters)
+UUpdateSession* UUpdateSession::Create(USessionData* session, UPlayerData* player)
 {
 	UUpdateSession* updateSessionObject(NewObject<UUpdateSession>());
-	updateSessionObject->sessionID = sessionID;
-	updateSessionObject->parameters = parameters;
+	updateSessionObject->session = session;
+	updateSessionObject->player = player;
 	return updateSessionObject;
 }

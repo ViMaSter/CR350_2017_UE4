@@ -15,9 +15,10 @@ UCreateSession::~UCreateSession()
 	// intentionally void
 }
 
-UCreateSession* UCreateSession::Create(USessionData* parameters)
+UCreateSession* UCreateSession::Create(USessionData* session, UPlayerData* player)
 {
 	UCreateSession* createSessionObject(NewObject<UCreateSession>());
-	createSessionObject->parameters = parameters;
+	createSessionObject->session = session;
+	createSessionObject->player = player;
 	return createSessionObject;
 }

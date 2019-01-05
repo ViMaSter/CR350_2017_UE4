@@ -3,25 +3,24 @@
 #pragma once
 
 #include "DataFormats/Command.h"
-#include "DataFormats/SessionData.h"
 #include "DataFormats/PlayerData.h"
-#include "SessionUpdate.generated.h"
+#include "PlayerUpdate.generated.h"
 
 /**
  * 
  */
 UCLASS(BlueprintType)
-class PRJ_API USessionUpdate : public UCommand
+class PRJ_API UPlayerUpdate : public UCommand
 {
 	GENERATED_BODY()
 			
-	USessionUpdate() {}
+	UPlayerUpdate() {}
 			
 public:
-	~USessionUpdate() {}
+	~UPlayerUpdate() {}
 
 	UPROPERTY(Category = WebSocket, VisibleAnywhere, BlueprintReadOnly)
-	class USessionData* session;
+	int32 playerID;
 
 	UPROPERTY(Category = WebSocket, VisibleAnywhere, BlueprintReadOnly)
 	class UPlayerData* player;
