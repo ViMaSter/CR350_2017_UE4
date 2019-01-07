@@ -13,10 +13,10 @@ class PRJ_API USessionData : public UObject
 {
 	GENERATED_BODY()
 
-	USessionData() {}
+	USessionData();
 
 public:
-	~USessionData() {}
+	~USessionData();
 
 	UPROPERTY(Category = WebSocket, VisibleAnywhere, BlueprintReadOnly)
 	FString mapName;
@@ -29,12 +29,5 @@ public:
 	UPROPERTY(Category = WebSocket, VisibleAnywhere, BlueprintReadOnly)
 	int32 currentMatchStart;
 
-	static USessionData* Create(FString mapName, int32 timelimit, int32 currentMatchStart)
-	{
-		USessionData* newObject(NewObject<USessionData>());
-		newObject->mapName = mapName;
-		newObject->timelimit = timelimit;
-		newObject->currentMatchStart = currentMatchStart;
-		return newObject;
-	}
+	static USessionData* Create(FString mapName, int32 timelimit, int32 currentMatchStart);
 };

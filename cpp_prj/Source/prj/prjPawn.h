@@ -79,14 +79,6 @@ public:
 
 	// Begin Actor Interface
 	virtual void BeginPlay() override;
-	void SetupWebsocket();
-	void SendNetworkMessage(const FString& data) const;
-	UFUNCTION()
-	virtual void OnOpen();
-	UFUNCTION()
-	virtual void OnError(const FString& errorMessage) const;
-	UFUNCTION()
-	virtual void OnMessage(const FString& data);
 	UFUNCTION()
 	void NetworkTick() const;
 	// End Actor Interface

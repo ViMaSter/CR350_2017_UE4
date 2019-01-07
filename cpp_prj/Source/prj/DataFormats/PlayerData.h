@@ -15,10 +15,10 @@ class PRJ_API UPlayerData : public UObject
 {
 	GENERATED_BODY()
 
-	UPlayerData() {}
+	UPlayerData();
 
 public:
-	~UPlayerData() {}
+	~UPlayerData();
 
 	UPROPERTY(Category = WebSocket, VisibleAnywhere, BlueprintReadOnly)
 	FString name;
@@ -29,12 +29,5 @@ public:
 	UPROPERTY(Category = WebSocket, VisibleAnywhere, BlueprintReadOnly)
 	int32 colorHex;
 
-	static UPlayerData* Create(FString name, float x, float y, int32 colorHex)
-	{
-		UPlayerData* newObject(NewObject<UPlayerData>());
-		newObject->name = name;
-		newObject->position = ULowercaseVector2D::Create(x, y);
-		newObject->colorHex = colorHex;
-		return newObject;
-	}
+	static UPlayerData* Create(FString name, float x, float y, int32 colorHex);
 };

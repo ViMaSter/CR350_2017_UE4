@@ -13,6 +13,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "Sound/SoundBase.h"
 
+#include "prjGameMode.h"
+
 #include "WebSocketBlueprintLibrary.h"
 #include "DataFormats/Request/CreateSession.h"
 #include "DataFormats/Request/UpdatePlayer.h"
@@ -153,89 +155,10 @@ void AprjPawn::ShotTimerExpired()
 void AprjPawn::BeginPlay()
 {
 	Super::BeginPlay();
-	SetupWebsocket();
-}
 
-void AprjPawn::SetupWebsocket()
-{
-	FString URI = FString::Printf(TEXT("ws://%s:%d/"), *Hostname, Port);
-	UE_LOG(LogWindows, Warning, TEXT("Attempting to connect to '%s'"), *URI);
-	websocketContext = UWebSocketBlueprintLibrary::Connect(URI);
-
-	FScriptDelegate OnConnectDelegate;
-	OnConnectDelegate.BindUFunction(this, "OnOpen");
-	websocketContext->OnConnectComplete.Add(OnConnectDelegate);
-
-	FScriptDelegate OnErrorDelegate;
-	OnErrorDelegate.BindUFunction(this, "OnError");
-	websocketContext->OnConnectError.Add(OnErrorDelegate);
-
-	FScriptDelegate OnMessageDelegate;
-	OnMessageDelegate.BindUFunction(this, "OnMessage");
-	websocketContext->OnReceiveData.Add(OnMessageDelegate);
-}
-
-void AprjPawn::SendNetworkMessage(const FString& data) const
-{
-	if (!websocketContext)
-	{
-		UE_LOG(LogWindows, Warning, TEXT("Attempting to send the following message without a valid connection: '%s'"), *data);
-		return;
-	}
-	UE_LOG(LogWindows, Warning, TEXT("Sending websocket message: '%s'"), *data);
-	websocketContext->SendText(data);
-}
-
-void AprjPawn::OnOpen()
-{
-	UE_LOG(LogWindows, Warning, TEXT("Successfully connected"));
 	FTimerDynamicDelegate NetworkTickDelegate;
 	NetworkTickDelegate.BindUFunction(this, "NetworkTick");
 	GetWorld()->GetTimerManager().SetTimer(WebUpdateTimerHandle, NetworkTickDelegate, UpdateFrequencyInSeconds, true);
-
-	FString resultString;
-	UWebSocketBlueprintLibrary::ObjectToJson(UCreateSession::Create(USessionData::Create("Sand Castle", 3 * 60 * 1000, 12345), UPlayerData::Create("UE4 Player", 1.0f, 2.0f, 0x3F7AF3)), resultString);
-	SendNetworkMessage(resultString);
-}
-
-void AprjPawn::OnError(const FString& errorMessage) const
-{
-	UE_LOG(LogWindows, Warning, TEXT("Error inside websocket connection: '%s'"), *errorMessage);
-
-}
-
-void AprjPawn::OnMessage(const FString& data)
-{
-	UE_LOG(LogWindows, Warning, TEXT("Received websocket data: '%s'"), *data);
-
-	// convert text to json object we can traverse
-	FString tmpData = data;
-	TSharedRef<TJsonReader<TCHAR>> Reader = FJsonStringReader::Create(MoveTemp(tmpData));
-
-	TSharedPtr<FJsonObject> JsonObject;
-	if (!FJsonSerializer::Deserialize(Reader, JsonObject))
-	{
-		UE_LOG(LogWindows, Warning, TEXT("Unable to parse json: '%s'"), *data);
-		return;
-	}
-
-	const FString command = JsonObject->GetStringField("command");
-	if (command.Equals("sessionJoin"))
-	{
-		USessionJoin* sessionJoin = Cast<USessionJoin>(UWebSocketBlueprintLibrary::JsonToObject(data, USessionJoin::StaticClass(), true));
-		UE_LOG(LogWindows, Warning, TEXT("Received join: sessionID: %d, x: %f, y: %f"), sessionJoin->sessionID, sessionJoin->player->position->GetX(), sessionJoin->player->position->GetY());
-		
-		CurrentSessionID = sessionJoin->sessionID;
-	}
-	else if (command.Equals("sessionUpdate"))
-	{
-		USessionUpdate* sessionUpdate = Cast<USessionUpdate>(UWebSocketBlueprintLibrary::JsonToObject(data, USessionUpdate::StaticClass(), true));
-		UE_LOG(LogWindows, Warning, TEXT("Received update: x: %f, y: %f"), sessionUpdate->player->position->GetX(), sessionUpdate->player->position->GetY());
-	}
-	else
-	{
-		UE_LOG(LogWindows, Warning, TEXT("Received unhandled command: %s"), *command);
-	}
 }
 
 void AprjPawn::NetworkTick() const
@@ -243,8 +166,9 @@ void AprjPawn::NetworkTick() const
 	const FVector currentLocation = GetActorLocation();
 	UE_LOG(LogWindows, Warning, TEXT("Network tick"));
 
+
 	FString resultString;
 	UWebSocketBlueprintLibrary::ObjectToJson(UUpdatePlayer::Create(UPlayerData::Create("UE4 Player", currentLocation.X, currentLocation.Y, 0x3F7AF3)), resultString);
-	SendNetworkMessage(resultString);
+	GetWorld()->GetAuthGameMode<AprjGameMode>()->SendNetworkMessage(resultString);
 }
 
