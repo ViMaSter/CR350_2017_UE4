@@ -7,6 +7,7 @@
 #include "Kismet/GameplayStatics.h"
 
 #include "prjGameStateBase.h"
+#include "prjHUD.h"
 
 #include "DataFormats/Request/CreateSession.h"
 #include "DataFormats/Response/SessionJoin.h"
@@ -22,12 +23,12 @@ void AprjGameMode::StartPlay()
 	OnMessageDelegate.BindUFunction(this, "OnCommandReceived");
 	this->OnWebsocketCommand.Add(OnMessageDelegate);
 	UE_LOG(LogInit, Log, TEXT("Donezo!"));
-	this->OnWebsocketCommand.Broadcast(nullptr);
+	ConnectToServer("ws://127.0.0.1", 7000);
 }
 
 void AprjGameMode::SendNetworkMessage(const FString& data) const
 {
-	if (!connection)
+	if (!connection || GetGameState<AprjGameStateBase>()->GetConnectionStatus() == EConnectionStatus::NO_CONNECTION)
 	{
 		UE_LOG(LogWindows, Warning, TEXT("Attempting to send the following message without a valid connection: '%s'"), *data);
 		return;
@@ -123,8 +124,11 @@ void AprjGameMode::ConnectToServer(FString hostname, uint32 port)
 
 AprjGameMode::AprjGameMode()
 {
-	// set default pawn class to our character class
-	DefaultPawnClass = AprjGameMode::StaticClass();
+	DefaultPawnClass = AprjPawn::StaticClass();
+	// PlayerControllerClass = AprjPlayerController::StaticClass();
+	// PlayerStateClass = AprjPlayerState::StaticClass();
+	GameStateClass = AprjGameStateBase::StaticClass();
+	HUDClass = AprjHUD::StaticClass();
 
 	commandMapping.Add("sessionJoin",	 USessionJoin::StaticClass());
 	commandMapping.Add("sessionUpdate",	 USessionUpdate::StaticClass());

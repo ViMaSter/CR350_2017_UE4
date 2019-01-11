@@ -166,7 +166,6 @@ void AprjPawn::NetworkTick() const
 	const FVector currentLocation = GetActorLocation();
 	UE_LOG(LogWindows, Warning, TEXT("Network tick"));
 
-
 	FString resultString;
 	UWebSocketBlueprintLibrary::ObjectToJson(UUpdatePlayer::Create(UPlayerData::Create("UE4 Player", currentLocation.X, currentLocation.Y, 0x3F7AF3)), resultString);
 	GetWorld()->GetAuthGameMode<AprjGameMode>()->SendNetworkMessage(resultString);

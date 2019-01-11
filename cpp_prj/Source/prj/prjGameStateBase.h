@@ -29,6 +29,10 @@ class PRJ_API AprjGameStateBase : public AGameStateBase
 	EConnectionStatus connectionStatus;
 
 public:
+	EConnectionStatus GetConnectionStatus()
+	{
+		return connectionStatus;
+	}
 	void SetConnectionStatus(EConnectionStatus newStatus);
 	FOnConnectionStatusChanged OnConnectionStatusChanged;
 };
