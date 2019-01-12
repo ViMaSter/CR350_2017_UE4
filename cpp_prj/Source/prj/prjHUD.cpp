@@ -1,12 +1,19 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "prjHUD.h"
+#include "TimerManager.h"
 #include "UI/NoConnectionWidget.h"
 
 void AprjHUD::PostInitializeComponents()
 {
-	Super::PostInitializeComponents();
+	FTimerHandle UnusedHandle;
+	GetWorldTimerManager().SetTimer(UnusedHandle, this, &AprjHUD::DoThing, 1.0f, false);
 
+	Super::PostInitializeComponents();
+}
+
+void AprjHUD::DoThing()
+{
 	// Create the widget and store it.
 	noConnectionWidget = CreateWidget<UNoConnectionWidget>(GetOwningPlayerController(), UNoConnectionWidget::StaticClass());
 
@@ -18,3 +25,4 @@ void AprjHUD::PostInitializeComponents()
 		noConnectionWidget->AddToViewport();
 	}
 }
+

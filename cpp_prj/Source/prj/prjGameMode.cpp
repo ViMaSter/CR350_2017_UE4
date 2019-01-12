@@ -23,7 +23,6 @@ void AprjGameMode::StartPlay()
 	OnMessageDelegate.BindUFunction(this, "OnCommandReceived");
 	this->OnWebsocketCommand.Add(OnMessageDelegate);
 	UE_LOG(LogInit, Log, TEXT("Donezo!"));
-	ConnectToServer("ws://127.0.0.1", 7000);
 }
 
 void AprjGameMode::SendNetworkMessage(const FString& data) const

@@ -17,15 +17,14 @@ class PRJ_API UConnectionStatusUserWidget : public UUserWidget
 {
 	GENERATED_BODY()
 protected:
-	UConnectionStatusUserWidget(const FObjectInitializer& ObjectInitializer);
+	UConnectionStatusUserWidget(const FObjectInitializer& ObjectInitializer, EConnectionStatus activeDuringStatus);
+private:
+	UConnectionStatusUserWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) {}
 
 private:
 	UFUNCTION()
 	void OnConnectionStatusChanged(EConnectionStatus newStatus);
 	void UpdateVisibility(bool shown);
-
-	virtual TSharedRef<SWidget>  RebuildWidget() override;
-	virtual void NativeConstruct() override;
 
 public:
 	UPROPERTY(Category = Websocket, BlueprintReadWrite, EditAnywhere)

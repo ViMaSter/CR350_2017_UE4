@@ -15,6 +15,8 @@ class PRJ_API AprjHUD : public AHUD
 	GENERATED_BODY()
 
 	virtual void PostInitializeComponents() override;
+
+	void DoThing();
 	
 	class UNoConnectionWidget* noConnectionWidget;
 };
