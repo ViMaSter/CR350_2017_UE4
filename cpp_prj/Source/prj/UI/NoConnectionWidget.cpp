@@ -2,8 +2,6 @@
 
 #include "NoConnectionWidget.h"
 
-#include "Engine.h"
-
 #include "WidgetTree.h"
 #include "Components/CanvasPanelSlot.h"
 #include "Components/CanvasPanel.h"
@@ -27,13 +25,6 @@ TSharedRef<SWidget> UNoConnectionWidget::RebuildWidget()
 		RootWidget = WidgetTree->ConstructWidget<UCanvasPanel>(UCanvasPanel::StaticClass(), (TEXT("Root")));
 		UCanvasPanelSlot* RootWidgetSlot = Cast<UCanvasPanelSlot>(RootWidget->Slot);
 		WidgetTree->RootWidget = RootWidget;
-	}
-
-	FVector2D Result = FVector2D(1, 1);
-
-	if (GEngine && GEngine->GameViewport)
-	{
-		GEngine->GameViewport->GetViewportSize( /*out*/Result);
 	}
 
 	// Create two buttons - local and remote server connection requests

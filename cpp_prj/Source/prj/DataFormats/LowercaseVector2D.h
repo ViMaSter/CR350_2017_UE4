@@ -36,4 +36,9 @@ public:
 		newObject->y = y;
 		return newObject;
 	}
+
+	FString ToString()
+	{
+		return FString::Printf(TEXT("X: %f | Y:%f"), this->x, this->y);
+	}
 };

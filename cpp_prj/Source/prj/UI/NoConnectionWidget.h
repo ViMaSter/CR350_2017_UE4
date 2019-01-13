@@ -16,6 +16,7 @@ class PRJ_API UNoConnectionWidget : public UConnectionStatusUserWidget
 protected:
 	UNoConnectionWidget(const FObjectInitializer& ObjectInitializer);
 
+private:
 	virtual TSharedRef<SWidget> RebuildWidget() override;
 
 private:

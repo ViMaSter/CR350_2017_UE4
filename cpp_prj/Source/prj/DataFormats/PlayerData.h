@@ -3,7 +3,6 @@
 #pragma once
 
 #include "Object.h"
-#include "LowercaseVector2D.h"
 
 #include "PlayerData.generated.h"
 
@@ -30,4 +29,6 @@ public:
 	int32 colorHex;
 
 	static UPlayerData* Create(FString name, float x, float y, int32 colorHex);
+
+	FString ToString();
 };

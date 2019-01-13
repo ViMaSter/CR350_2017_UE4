@@ -1,14 +1,19 @@
 // Copyright 1998-2018 Epic Games, Inc. All Rights Reserved.
 
 #include "prjGameMode.h"
-#include "prjPawn.h"
 
 #include "Engine/EngineTypes.h"
 #include "Kismet/GameplayStatics.h"
 
+#include "prjPawn.h"
+#include "prjPlayerController.h"
 #include "prjGameStateBase.h"
 #include "prjHUD.h"
 
+#include "WebSocketBlueprintLibrary.h"
+
+#include "DataFormats/Command.h"
+#include "DataFormats/PlayerData.h"
 #include "DataFormats/Request/CreateSession.h"
 #include "DataFormats/Response/SessionJoin.h"
 #include "DataFormats/Response/SessionUpdate.h"
@@ -40,10 +45,6 @@ void AprjGameMode::OnOpen()
 {
 	UE_LOG(LogWindows, Warning, TEXT("Successfully connected"));
 	GetGameState<AprjGameStateBase>()->SetConnectionStatus(EConnectionStatus::NO_SESSION);
-
-	FString resultString;
-	UWebSocketBlueprintLibrary::ObjectToJson(UCreateSession::Create(USessionData::Create("Sand Castle", 3 * 60 * 1000, 12345), UPlayerData::Create("UE4 Player", 1.0f, 2.0f, 0x3F7AF3)), resultString);
-	SendNetworkMessage(resultString);
 }
 
 void AprjGameMode::OnError(const FString& errorMessage) const
@@ -80,23 +81,27 @@ void AprjGameMode::OnMessage(const FString& data)
 
 void AprjGameMode::OnCommandReceived(UCommand* command)
 {
-	UE_LOG(LogInit, Log, TEXT("Command received!"));
-	if (USessionJoin* sessionJoin = Cast<USessionJoin>(command))
+	UE_LOG(LogWindows, Log, TEXT("Received command: %s"), *command->ToString());
+	if (command->error)
 	{
-		UE_LOG(LogWindows, Warning, TEXT("Received join: sessionID: %d, x: %f, y: %f"), sessionJoin->sessionID, sessionJoin->player->position->GetX(), sessionJoin->player->position->GetY());
+		UE_DEBUG_BREAK();
+		return;
 	}
-	else if (USessionUpdate* sessionUpdate = Cast<USessionUpdate>(command))
+
+	if (command->command == "sessionJoin")
 	{
-		UE_LOG(LogWindows, Warning, TEXT("Received update: x: %f, y: %f"), sessionUpdate->player->position->GetX(), sessionUpdate->player->position->GetY());
+		GetGameState<AprjGameStateBase>()->SetConnectionStatus(EConnectionStatus::IN_SESSION);
 	}
-	else
+
+	if (command->command == "sessionLeave")
 	{
-		UE_LOG(LogWindows, Warning, TEXT("Received unhandled command: %s"), *command->StaticClass()->GetFullName());
+		GetGameState<AprjGameStateBase>()->SetConnectionStatus(EConnectionStatus::NO_SESSION);
 	}
+	
 }
 
 
-void AprjGameMode::ConnectToServer(FString hostname, uint32 port)
+void AprjGameMode::ConnectToServer(const FString& hostname, uint32 port)
 {
 	FString URI = hostname + ":" + FString::FromInt(port);
 
@@ -124,7 +129,7 @@ void AprjGameMode::ConnectToServer(FString hostname, uint32 port)
 AprjGameMode::AprjGameMode()
 {
 	DefaultPawnClass = AprjPawn::StaticClass();
-	// PlayerControllerClass = AprjPlayerController::StaticClass();
+	PlayerControllerClass = AprjPlayerController::StaticClass();
 	// PlayerStateClass = AprjPlayerState::StaticClass();
 	GameStateClass = AprjGameStateBase::StaticClass();
 	HUDClass = AprjHUD::StaticClass();

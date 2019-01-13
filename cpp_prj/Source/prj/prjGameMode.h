@@ -7,14 +7,9 @@
 
 #include "Delegates/DelegateCombinations.h"
 
-#include "DataFormats/PlayerData.h"
-#include "DataFormats/Command.h"
-
-#include "WebSocketBlueprintLibrary.h"
-
 #include "prjGameMode.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FOnCommandReceivedSignature, UCommand*, command );
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FOnCommandReceivedSignature, class UCommand*, command );
 
 UCLASS(MinimalAPI)
 class AprjGameMode : public AGameModeBase
@@ -34,10 +29,10 @@ class AprjGameMode : public AGameModeBase
 	UFUNCTION()
 	virtual void OnMessage(const FString& data);
 	UFUNCTION()
-	void OnCommandReceived(UCommand* command);
+	void OnCommandReceived(class UCommand* command);
 
-	class UWebSocketBase* connection;
-	TMap<int32, UPlayerData> spawningQueue;
+	class UWebSocketBase* connection = nullptr;
+	TMap<int32, class UPlayerData*> spawningQueue;
 	TMap<FString, UClass*> commandMapping;
 
 public:
@@ -45,7 +40,7 @@ public:
 
 	// Websocket related-methods
 	void SendNetworkMessage(const FString& data) const;
-	void ConnectToServer(FString hostname, uint32 port);
+	void ConnectToServer(const FString& hostname, uint32 port);
 
 	UPROPERTY(BlueprintAssignable, Category = WebSocket)
 	FOnCommandReceivedSignature OnWebsocketCommand;

@@ -21,3 +21,8 @@ UJoinSession* UJoinSession::Create(int32 sessionID)
 	JoinSessionObject->sessionID = sessionID;
 	return JoinSessionObject;
 }
+
+FString UJoinSession::ToString()
+{
+	return FString::Printf(TEXT("%s | Session ID: %d"), *Super::ToString(), sessionID);
+}

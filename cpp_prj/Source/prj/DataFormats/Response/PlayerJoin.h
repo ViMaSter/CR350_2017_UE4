@@ -24,4 +24,9 @@ public:
 
 	UPROPERTY(Category = WebSocket, VisibleAnywhere, BlueprintReadOnly)
 	class UPlayerData* player;
+
+	virtual FString ToString() override
+	{
+		 return FString::Printf(TEXT("%s | Player ID: %d | Player [%s]"), *Super::ToString(), player, *player->ToString());
+	}
 };

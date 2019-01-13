@@ -5,6 +5,8 @@
 #include "Misc/AutomationTest.h"
 
 #include "WebSocketBlueprintLibrary.h"
+#include "DataFormats/SessionData.h"
+#include "DataFormats/PlayerData.h"
 #include "DataFormats/Request/CreateSession.h"
 #include "DataFormats/Request/UpdateSession.h"
 

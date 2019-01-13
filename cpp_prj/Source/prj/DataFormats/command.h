@@ -21,4 +21,12 @@ public:
 
 	UPROPERTY(Category = WebSocket, VisibleAnywhere, BlueprintReadOnly)
 	FString command;
+
+	UPROPERTY(Category = WebSocket, VisibleAnywhere, BlueprintReadOnly)
+	int32 error;
+
+	virtual FString ToString()
+	{
+		return FString::Printf(TEXT("Command: %s | Error code: %d"), *command, error);
+	}
 };

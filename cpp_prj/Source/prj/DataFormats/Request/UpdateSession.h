@@ -3,8 +3,6 @@
 #pragma once
 
 #include "DataFormats/Command.h"
-#include "DataFormats/SessionData.h"
-#include "DataFormats/PlayerData.h"
 #include "UpdateSession.generated.h"
 
 /**
@@ -26,5 +24,6 @@ public:
 	class UPlayerData* player;
 
 public:
-	static UUpdateSession* Create(USessionData* session, UPlayerData* player);
+	static UUpdateSession* Create(class USessionData* session, class UPlayerData* player);
+	virtual FString ToString() override;
 };

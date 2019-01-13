@@ -9,6 +9,7 @@
 
 UConnectionStatusUserWidget::UConnectionStatusUserWidget(const FObjectInitializer& ObjectInitializer, EConnectionStatus activeDuringStatus)
 	: Super(ObjectInitializer)
+	, activeDuringStatus(activeDuringStatus)
 {
 	if (!GetWorld() || !GetWorld()->GetAuthGameMode() || !GetWorld()->GetAuthGameMode()->GetGameState<AprjGameStateBase>())
 	{
@@ -23,7 +24,7 @@ UConnectionStatusUserWidget::UConnectionStatusUserWidget(const FObjectInitialize
 	UpdateVisibility(gameState->GetConnectionStatus() == activeDuringStatus);
 }
 
-void UConnectionStatusUserWidget::OnConnectionStatusChanged(EConnectionStatus newStatus)
+void UConnectionStatusUserWidget::OnConnectionStatusChanged(EConnectionStatus oldStatus, EConnectionStatus newStatus)
 {
 	UpdateVisibility(newStatus == activeDuringStatus);
 }
@@ -31,4 +32,12 @@ void UConnectionStatusUserWidget::OnConnectionStatusChanged(EConnectionStatus ne
 void UConnectionStatusUserWidget::UpdateVisibility(bool shown)
 {
 	this->SetVisibility(shown ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
+}
+
+
+TSharedRef<SWidget> UConnectionStatusUserWidget::RebuildWidget()
+{
+	AprjGameStateBase* gameState = GetWorld()->GetAuthGameMode()->GetGameState<AprjGameStateBase>();
+	OnConnectionStatusChanged(EConnectionStatus::NO_CONNECTION, gameState->GetConnectionStatus());
+	return Super::RebuildWidget();
 }

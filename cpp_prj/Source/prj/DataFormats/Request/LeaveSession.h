@@ -20,4 +20,5 @@ public:
 
 public:
 	static ULeaveSession* Create();
+	virtual FString ToString() override;
 };

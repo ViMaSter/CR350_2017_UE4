@@ -30,4 +30,6 @@ public:
 	int32 currentMatchStart;
 
 	static USessionData* Create(FString mapName, int32 timelimit, int32 currentMatchStart);
+
+	FString ToString();
 };

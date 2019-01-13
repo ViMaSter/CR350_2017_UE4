@@ -20,3 +20,8 @@ ULeaveSession* ULeaveSession::Create()
 	ULeaveSession* LeaveSessionObject(NewObject<ULeaveSession>());
 	return LeaveSessionObject;
 }
+
+FString ULeaveSession::ToString()
+{
+	return FString::Printf(TEXT("%s | "), *Super::ToString());
+}

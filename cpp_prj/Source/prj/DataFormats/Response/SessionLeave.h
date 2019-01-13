@@ -19,4 +19,8 @@ class PRJ_API USessionLeave : public UCommand
 public:
 	~USessionLeave() {}
 
+	virtual FString ToString() override
+	{
+		 return FString::Printf(TEXT("%s | "), *Super::ToString());
+	}
 };

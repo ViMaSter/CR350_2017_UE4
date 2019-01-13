@@ -3,12 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
 
 #include "prjPawn.generated.h"
-
-// forward declarations
-class UWebSocketBase;
 
 UCLASS(Blueprintable)
 class AprjPawn : public APawn
@@ -17,15 +13,15 @@ class AprjPawn : public APawn
 
 	/* The mesh component */
 	UPROPERTY(Category = Mesh, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	class UStaticMeshComponent* ShipMeshComponent;
+	class UStaticMeshComponent* ShipMeshComponent = nullptr;
 
 	/** The camera */
 	UPROPERTY(Category = Camera, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	class UCameraComponent* CameraComponent;
+	class UCameraComponent* CameraComponent = nullptr;
 
 	/** Camera boom positioning the camera above the character */
 	UPROPERTY(Category = Camera, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	class USpringArmComponent* CameraBoom;
+	class USpringArmComponent* CameraBoom = nullptr;
 
 public:
 	AprjPawn();
@@ -44,7 +40,7 @@ public:
 
 	/** Sound to play each time we fire */
 	UPROPERTY(Category = Audio, EditAnywhere, BlueprintReadWrite)
-	class USoundBase* FireSound;
+	class USoundBase* FireSound = nullptr;
 
 	/** Sound to play each time we fire */
 	UPROPERTY(Category = Websocket, EditAnywhere, BlueprintReadWrite)
@@ -86,7 +82,7 @@ public:
 private:
 
 	// UEWebsocket websocketConnection;
-	class UWebSocketBase* websocketContext;
+	class UWebSocketBase* websocketContext = nullptr;
 	FTimerHandle WebUpdateTimerHandle;
 
 	/* Flag to control firing  */

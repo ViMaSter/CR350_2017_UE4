@@ -3,8 +3,6 @@
 #pragma once
 
 #include "DataFormats/Command.h"
-#include "DataFormats/SessionData.h"
-#include "DataFormats/PlayerData.h"
 #include "CreateSession.generated.h"
 
 /**
@@ -21,10 +19,11 @@ public:
 	~UCreateSession();
 
 	UPROPERTY(Category = WebSocket, VisibleAnywhere, BlueprintReadOnly)
-	class USessionData* session;
+	class USessionData* session = nullptr;
 	UPROPERTY(Category = WebSocket, VisibleAnywhere, BlueprintReadOnly)
-	class UPlayerData* player;
+	class UPlayerData* player = nullptr;
 
 public:
 	static UCreateSession* Create(USessionData* session, UPlayerData* player);
+	virtual FString ToString() override;
 };

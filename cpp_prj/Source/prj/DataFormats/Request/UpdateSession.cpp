@@ -2,6 +2,9 @@
 
 #include "UpdateSession.h"
 
+#include "DataFormats/SessionData.h"
+#include "DataFormats/PlayerData.h"
+
 /**
  * 
  */
@@ -21,4 +24,9 @@ UUpdateSession* UUpdateSession::Create(USessionData* session, UPlayerData* playe
 	updateSessionObject->session = session;
 	updateSessionObject->player = player;
 	return updateSessionObject;
+}
+
+FString UUpdateSession::ToString()
+{
+	return FString::Printf(TEXT("%s | Session: [%s] | Player [%s]"), *Super::ToString(), *session->ToString(), *player->ToString());
 }

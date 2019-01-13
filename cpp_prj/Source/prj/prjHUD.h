@@ -16,7 +16,7 @@ class PRJ_API AprjHUD : public AHUD
 
 	virtual void PostInitializeComponents() override;
 
-	void DoThing();
-	
-	class UNoConnectionWidget* noConnectionWidget;
+	class UNoConnectionWidget* noConnectionWidget = nullptr;
+	class UNoSessionWidget* noSessionWidget = nullptr;
+	class UInSessionWidget* inSessionWidget = nullptr;
 };

@@ -1,28 +1,29 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "prjHUD.h"
-#include "TimerManager.h"
 #include "UI/NoConnectionWidget.h"
+#include "UI/NoSessionWidget.h"
+#include "UI/InSessionWidget.h"
 
 void AprjHUD::PostInitializeComponents()
 {
-	FTimerHandle UnusedHandle;
-	GetWorldTimerManager().SetTimer(UnusedHandle, this, &AprjHUD::DoThing, 1.0f, false);
-
 	Super::PostInitializeComponents();
-}
 
-void AprjHUD::DoThing()
-{
-	// Create the widget and store it.
 	noConnectionWidget = CreateWidget<UNoConnectionWidget>(GetOwningPlayerController(), UNoConnectionWidget::StaticClass());
+	noSessionWidget = CreateWidget<UNoSessionWidget>(GetOwningPlayerController(), UNoSessionWidget::StaticClass());
+	inSessionWidget = CreateWidget<UInSessionWidget>(GetOwningPlayerController(), UInSessionWidget::StaticClass());
 
-	// now you can use the widget directly since you have a referance for it.
-	// Extra check to  make sure the pointer holds the widget.
 	if (noConnectionWidget)
 	{
-		//let add it to the view port
 		noConnectionWidget->AddToViewport();
+	}
+	if (noSessionWidget)
+	{
+		noSessionWidget->AddToViewport();
+	}
+	if (inSessionWidget)
+	{
+		inSessionWidget->AddToViewport();
 	}
 }
 

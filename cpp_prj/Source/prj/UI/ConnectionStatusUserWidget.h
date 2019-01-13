@@ -23,8 +23,11 @@ private:
 
 private:
 	UFUNCTION()
-	void OnConnectionStatusChanged(EConnectionStatus newStatus);
+	void OnConnectionStatusChanged(EConnectionStatus oldStatus, EConnectionStatus newStatus);
 	void UpdateVisibility(bool shown);
+
+protected:
+	virtual TSharedRef<SWidget> RebuildWidget() override;
 
 public:
 	UPROPERTY(Category = Websocket, BlueprintReadWrite, EditAnywhere)

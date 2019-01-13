@@ -3,7 +3,6 @@
 #pragma once
 
 #include "DataFormats/Command.h"
-#include "DataFormats/PlayerData.h"
 #include "UpdatePlayer.generated.h"
 
 /**
@@ -20,8 +19,12 @@ public:
 	~UUpdatePlayer();
 
 	UPROPERTY(Category = WebSocket, VisibleAnywhere, BlueprintReadOnly)
+	int32 playerID;
+
+	UPROPERTY(Category = WebSocket, VisibleAnywhere, BlueprintReadOnly)
 	class UPlayerData* player;
 
 public:
-	static UUpdatePlayer* Create(UPlayerData* player);
+	static UUpdatePlayer* Create(class UPlayerData* player);
+	virtual FString ToString() override;
 };

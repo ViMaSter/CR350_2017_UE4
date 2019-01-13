@@ -23,4 +23,5 @@ public:
 
 public:
 	static UJoinSession* Create(int32 sessionID);
+	virtual FString ToString() override;
 };
