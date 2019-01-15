@@ -24,6 +24,8 @@
 
 void AprjGameMode::StartPlay()
 {
+	Super::StartPlay();
+
 	FScriptDelegate OnMessageDelegate;
 	OnMessageDelegate.BindUFunction(this, "OnCommandReceived");
 	this->OnWebsocketCommand.Add(OnMessageDelegate);
@@ -127,6 +129,7 @@ void AprjGameMode::ConnectToServer(const FString& hostname, uint32 port)
 }
 
 AprjGameMode::AprjGameMode()
+	: Super()
 {
 	DefaultPawnClass = AprjPawn::StaticClass();
 	PlayerControllerClass = AprjPlayerController::StaticClass();

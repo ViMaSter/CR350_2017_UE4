@@ -15,6 +15,5 @@ class PRJ_API AprjPlayerController : public APlayerController
 	GENERATED_BODY()
 
 	AprjPlayerController();
-	
-	
+
 };

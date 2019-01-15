@@ -5,7 +5,4 @@
 AprjPlayerController::AprjPlayerController()
 	: Super()
 {
-	bShowMouseCursor = true;
-	bEnableClickEvents = true;
-	bEnableMouseOverEvents = true;
 }
