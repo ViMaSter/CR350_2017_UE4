@@ -7,6 +7,8 @@
 
 #include "Delegates/DelegateCombinations.h"
 
+#include "prjPawn.h"
+
 #include "prjGameMode.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FOnCommandReceivedSignature, class UCommand*, command );
@@ -30,6 +32,8 @@ class AprjGameMode : public AGameModeBase
 	virtual void OnMessage(const FString& data);
 	UFUNCTION()
 	void OnCommandReceived(class UCommand* command);
+	void SpawnPlayerByID(bool isLocalPlayer, int32 playerID, class UPlayerData* playerData);
+	void RemovePlayerByID(int32 playerID);
 
 	class UWebSocketBase* connection = nullptr;
 	TMap<int32, class UPlayerData*> spawningQueue;
@@ -44,6 +48,12 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = WebSocket)
 	FOnCommandReceivedSignature OnWebsocketCommand;
+
+	UPROPERTY(EditAnywhere, NoClear, BlueprintReadOnly, Category = Classes)
+	TSubclassOf<APlayerController> RemotePlayerControllerClass;
+	
+	UPROPERTY(EditAnywhere, NoClear, BlueprintReadOnly, Category = Classes)
+	TSubclassOf<AprjPawn> IngamePawnClass;
 };
 
 

@@ -24,6 +24,9 @@ public:
 	int32 sessionID;
 
 	UPROPERTY(Category = WebSocket, VisibleAnywhere, BlueprintReadOnly)
+	int32 playerID;
+
+	UPROPERTY(Category = WebSocket, VisibleAnywhere, BlueprintReadOnly)
 	class USessionData* session;
 
 	UPROPERTY(Category = WebSocket, VisibleAnywhere, BlueprintReadOnly)
@@ -31,6 +34,6 @@ public:
 
 	virtual FString ToString() override
 	{
-		 return FString::Printf(TEXT("%s | Session ID: %d | Session: [%s] | Player [%s]"), *Super::ToString(), sessionID, session == nullptr ? TEXT("EMPTY") : *session->ToString(), player == nullptr ? TEXT("EMPTY") : *player->ToString());
+		 return FString::Printf(TEXT("%s | Session ID: %d | Player ID: %d | Session: [%s] | Player [%s]"), *Super::ToString(), sessionID, playerID, session == nullptr ? TEXT("EMPTY") : *session->ToString(), player == nullptr ? TEXT("EMPTY") : *player->ToString());
 	}
 };

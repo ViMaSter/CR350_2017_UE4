@@ -6,6 +6,8 @@
 #include "GameFramework/GameStateBase.h"
 #include "Delegates/DelegateCombinations.h"
 
+#include "DataFormats/SessionData.h"
+
 #include "prjGameStateBase.generated.h"
 
 UENUM(BlueprintType)		//"BlueprintType" is essential to include
@@ -26,13 +28,18 @@ class PRJ_API AprjGameStateBase : public AGameStateBase
 {
 	GENERATED_BODY()
 
-	EConnectionStatus connectionStatus;
+	EConnectionStatus connectionStatus = EConnectionStatus::NO_CONNECTION;
 
 public:
+	int32 SessionID = -1;
+	int32 LocalPlayerID = -1;
+	USessionData* CurrentSession = nullptr;
+
 	EConnectionStatus GetConnectionStatus()
 	{
 		return connectionStatus;
 	}
 	void SetConnectionStatus(EConnectionStatus newStatus);
 	FOnConnectionStatusChanged OnConnectionStatusChanged;
+
 };

@@ -5,10 +5,12 @@
 #include "Engine/EngineTypes.h"
 #include "Kismet/GameplayStatics.h"
 
-#include "prjPawn.h"
-#include "prjPlayerController.h"
 #include "prjGameStateBase.h"
+#include "prjPlayerState.h"
 #include "prjHUD.h"
+
+#include "LocalPlayerController.h"
+#include "RemotePlayerController.h"
 
 #include "WebSocketBlueprintLibrary.h"
 
@@ -92,16 +94,53 @@ void AprjGameMode::OnCommandReceived(UCommand* command)
 
 	if (command->command == "sessionJoin")
 	{
-		GetGameState<AprjGameStateBase>()->SetConnectionStatus(EConnectionStatus::IN_SESSION);
+		USessionJoin* sessionJoin = Cast<USessionJoin>(command);
+
+		AprjGameStateBase* gameState = GetGameState<AprjGameStateBase>();
+		gameState->SetConnectionStatus(EConnectionStatus::IN_SESSION);
+		gameState->SessionID = sessionJoin->sessionID;
+		gameState->LocalPlayerID = sessionJoin->playerID;
+		gameState->CurrentSession = sessionJoin->session;
+
+		SpawnPlayerByID(true, sessionJoin->playerID, sessionJoin->player);
 	}
 
 	if (command->command == "sessionLeave")
 	{
-		GetGameState<AprjGameStateBase>()->SetConnectionStatus(EConnectionStatus::NO_SESSION);
+		AprjGameStateBase* gameState = GetGameState<AprjGameStateBase>();
+		gameState->SetConnectionStatus(EConnectionStatus::NO_SESSION);
+		ResetLevel();
 	}
-	
+
+	if (command->command == "playerJoin")
+	{
+		UPlayerJoin* playerJoin = Cast<UPlayerJoin>(command);
+
+		SpawnPlayerByID(false, playerJoin->playerID, playerJoin->player);
+	}
 }
 
+void AprjGameMode::SpawnPlayerByID(bool isLocalPlayer, int32 playerID, UPlayerData* playerData)
+{
+	UE_LOG(LogExec, Log, TEXT("Spawning %s player: ID: %d"), isLocalPlayer ? "local" : "remote", playerID);
+	APlayerController* playerController(
+		isLocalPlayer ?
+		GetWorld()->GetFirstPlayerController() :
+		GetWorld()->SpawnActor<APlayerController>(RemotePlayerControllerClass, this->GetRootComponent()->GetComponentTransform())
+	);
+
+	AprjPlayerState* state(Cast<AprjPlayerState>(playerController->PlayerState));
+	state->networkPlayerID = playerID;
+	state->networkPlayerData = playerData;
+	APawn* pawn(GetWorld()->SpawnActor<APawn>(IngamePawnClass, FTransform(FRotator(), FindPlayerStart(playerController, playerData->name)->GetRootComponent()->GetComponentLocation())));
+
+	playerController->Possess(pawn);
+}
+
+void AprjGameMode::RemovePlayerByID(int32 playerID)
+{
+
+}
 
 void AprjGameMode::ConnectToServer(const FString& hostname, uint32 port)
 {
@@ -131,9 +170,11 @@ void AprjGameMode::ConnectToServer(const FString& hostname, uint32 port)
 AprjGameMode::AprjGameMode()
 	: Super()
 {
-	DefaultPawnClass = AprjPawn::StaticClass();
-	PlayerControllerClass = AprjPlayerController::StaticClass();
-	// PlayerStateClass = AprjPlayerState::StaticClass();
+	DefaultPawnClass = nullptr;
+	PlayerControllerClass = ALocalPlayerController::StaticClass();
+	RemotePlayerControllerClass = ARemotePlayerController::StaticClass();
+	IngamePawnClass = AprjPawn::StaticClass();
+	PlayerStateClass = AprjPlayerState::StaticClass();
 	GameStateClass = AprjGameStateBase::StaticClass();
 	HUDClass = AprjHUD::StaticClass();
 

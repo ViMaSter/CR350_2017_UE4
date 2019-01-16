@@ -1,0 +1,8 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+#include "RemotePlayerController.h"
+
+ARemotePlayerController::ARemotePlayerController()
+	: Super()
+{
+}
