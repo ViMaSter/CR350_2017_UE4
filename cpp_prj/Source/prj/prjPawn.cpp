@@ -13,17 +13,6 @@
 #include "Kismet/GameplayStatics.h"
 #include "Sound/SoundBase.h"
 
-#include "prjGameMode.h"
-
-#include "WebSocketBlueprintLibrary.h"
-#include "DataFormats/Request/CreateSession.h"
-#include "DataFormats/Request/UpdatePlayer.h"
-#include "DataFormats/Response/SessionJoin.h"
-#include "DataFormats/Response/SessionUpdate.h"
-#include "DataFormats/SessionData.h"
-
-const FName AprjPawn::MoveForwardBinding("MoveForward");
-const FName AprjPawn::MoveRightBinding("MoveRight");
 const FName AprjPawn::FireForwardBinding("FireForward");
 const FName AprjPawn::FireRightBinding("FireRight");
 
@@ -59,12 +48,6 @@ AprjPawn::AprjPawn()
 	GunOffset = FVector(90.f, 0.f, 0.f);
 	FireRate = 0.1f;
 	bCanFire = true;
-
-	// Websocket
-	Hostname = "127.0.0.1";
-	Port = 7000;
-	UpdateFrequencyInSeconds = 1.0f;
-	CurrentSessionID = -1;
 }
 
 void AprjPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
@@ -72,8 +55,6 @@ void AprjPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInputCompo
 	check(PlayerInputComponent);
 
 	// set up gameplay key bindings
-	PlayerInputComponent->BindAxis(MoveForwardBinding);
-	PlayerInputComponent->BindAxis(MoveRightBinding);
 	PlayerInputComponent->BindAxis(FireForwardBinding);
 	PlayerInputComponent->BindAxis(FireRightBinding);
 }
@@ -81,8 +62,8 @@ void AprjPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInputCompo
 void AprjPawn::Tick(float DeltaSeconds)
 {
 	// Find movement direction
-	const float ForwardValue = GetInputAxisValue(MoveForwardBinding);
-	const float RightValue = GetInputAxisValue(MoveRightBinding);
+	const float RightValue = this->X;
+	const float ForwardValue = this->Y;
 
 	// Clamp max size so that (X=1, Y=1) doesn't cause faster movement in diagonal directions
 	const FVector MoveDirection = FVector(ForwardValue, RightValue, 0.f).GetClampedToMaxSize(1.0f);
@@ -147,6 +128,12 @@ void AprjPawn::FireShot(FVector FireDirection)
 	}
 }
 
+void AprjPawn::SetMovement(float x, float y)
+{
+	this->X = x;
+	this->Y = y;
+}
+
 void AprjPawn::ShotTimerExpired()
 {
 	bCanFire = true;
@@ -155,19 +142,5 @@ void AprjPawn::ShotTimerExpired()
 void AprjPawn::BeginPlay()
 {
 	Super::BeginPlay();
-
-	FTimerDynamicDelegate NetworkTickDelegate;
-	NetworkTickDelegate.BindUFunction(this, "NetworkTick");
-	GetWorld()->GetTimerManager().SetTimer(WebUpdateTimerHandle, NetworkTickDelegate, UpdateFrequencyInSeconds, true);
-}
-
-void AprjPawn::NetworkTick() const
-{
-	const FVector currentLocation = GetActorLocation();
-	UE_LOG(LogWindows, Warning, TEXT("Network tick"));
-
-	FString resultString;
-	UWebSocketBlueprintLibrary::ObjectToJson(UUpdatePlayer::Create(UPlayerData::Create("UE4 Player", currentLocation.X, currentLocation.Y, 0x3F7AF3)), resultString);
-	GetWorld()->GetAuthGameMode<AprjGameMode>()->SendNetworkMessage(resultString);
 }
 

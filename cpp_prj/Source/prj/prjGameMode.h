@@ -35,6 +35,8 @@ class AprjGameMode : public AGameModeBase
 	void SpawnPlayerByID(bool isLocalPlayer, int32 playerID, class UPlayerData* playerData);
 	void RemovePlayerByID(int32 playerID);
 
+	virtual APawn* SpawnDefaultPawnFor_Implementation(AController* NewPlayer, AActor* StartSpot) override;
+	virtual APawn* SpawnDefaultPawnAtTransform_Implementation(AController* NewPlayer, const FTransform& SpawnTransform) override;
 	class UWebSocketBase* connection = nullptr;
 	TMap<int32, class UPlayerData*> spawningQueue;
 	TMap<FString, UClass*> commandMapping;
@@ -50,10 +52,7 @@ public:
 	FOnCommandReceivedSignature OnWebsocketCommand;
 
 	UPROPERTY(EditAnywhere, NoClear, BlueprintReadOnly, Category = Classes)
-	TSubclassOf<APlayerController> RemotePlayerControllerClass;
-	
-	UPROPERTY(EditAnywhere, NoClear, BlueprintReadOnly, Category = Classes)
-	TSubclassOf<AprjPawn> IngamePawnClass;
+	TSubclassOf<APlayerController> RemoteControllerClass;
 };
 
 

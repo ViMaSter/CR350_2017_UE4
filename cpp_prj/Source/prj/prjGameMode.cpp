@@ -22,6 +22,7 @@
 #include "DataFormats/Response/SessionLeave.h"
 #include "DataFormats/Response/PlayerJoin.h"
 #include "DataFormats/Response/PlayerUpdate.h"
+#include "DataFormats/Response/PlayerLeave.h"
 #include "DataFormats/Request/CreateSession.h"
 
 void AprjGameMode::StartPlay()
@@ -122,24 +123,41 @@ void AprjGameMode::OnCommandReceived(UCommand* command)
 
 void AprjGameMode::SpawnPlayerByID(bool isLocalPlayer, int32 playerID, UPlayerData* playerData)
 {
+	FActorSpawnParameters spawnParameters = FActorSpawnParameters();
+	spawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
 	UE_LOG(LogExec, Log, TEXT("Spawning %s player: ID: %d"), isLocalPlayer ? "local" : "remote", playerID);
-	APlayerController* playerController(
+	APlayerController* controller(
 		isLocalPlayer ?
 		GetWorld()->GetFirstPlayerController() :
-		GetWorld()->SpawnActor<APlayerController>(RemotePlayerControllerClass, this->GetRootComponent()->GetComponentTransform())
+		GetWorld()->SpawnActor<APlayerController>(RemoteControllerClass, FTransform(FRotator(EForceInit::ForceInitToZero), FVector(EForceInit::ForceInitToZero)))
 	);
 
-	AprjPlayerState* state(Cast<AprjPlayerState>(playerController->PlayerState));
+	AprjPlayerState* state(Cast<AprjPlayerState>(controller->PlayerState));
 	state->networkPlayerID = playerID;
 	state->networkPlayerData = playerData;
-	APawn* pawn(GetWorld()->SpawnActor<APawn>(IngamePawnClass, FTransform(FRotator(), FindPlayerStart(playerController, playerData->name)->GetRootComponent()->GetComponentLocation())));
+	APawn* pawn(GetWorld()->SpawnActor<APawn>(
+		DefaultPawnClass,
+		FindPlayerStart(controller, playerData->name)->GetRootComponent()->GetComponentTransform(),
+		spawnParameters
+	));
 
-	playerController->Possess(pawn);
+	controller->Possess(pawn);
 }
 
 void AprjGameMode::RemovePlayerByID(int32 playerID)
 {
 
+}
+
+APawn* AprjGameMode::SpawnDefaultPawnFor_Implementation(AController* NewPlayer, AActor* StartSpot)
+{
+	return nullptr;
+}
+
+APawn* AprjGameMode::SpawnDefaultPawnAtTransform_Implementation(AController* NewPlayer, const FTransform& SpawnTransform)
+{
+	return nullptr;
 }
 
 void AprjGameMode::ConnectToServer(const FString& hostname, uint32 port)
@@ -170,18 +188,18 @@ void AprjGameMode::ConnectToServer(const FString& hostname, uint32 port)
 AprjGameMode::AprjGameMode()
 	: Super()
 {
-	DefaultPawnClass = nullptr;
+	DefaultPawnClass = AprjPawn::StaticClass();
 	PlayerControllerClass = ALocalPlayerController::StaticClass();
-	RemotePlayerControllerClass = ARemotePlayerController::StaticClass();
-	IngamePawnClass = AprjPawn::StaticClass();
+	RemoteControllerClass = ARemotePlayerController::StaticClass();
 	PlayerStateClass = AprjPlayerState::StaticClass();
 	GameStateClass = AprjGameStateBase::StaticClass();
 	HUDClass = AprjHUD::StaticClass();
 
-	commandMapping.Add("sessionJoin",	 USessionJoin::StaticClass());
-	commandMapping.Add("sessionUpdate",	 USessionUpdate::StaticClass());
-	commandMapping.Add("sessionLeave",	 USessionLeave::StaticClass());
-	commandMapping.Add("playerJoin",	 UPlayerJoin::StaticClass());
-	commandMapping.Add("playerUpdate",	 UPlayerUpdate::StaticClass());
+	commandMapping.Add("sessionJoin",	USessionJoin::StaticClass());
+	commandMapping.Add("sessionUpdate",	USessionUpdate::StaticClass());
+	commandMapping.Add("sessionLeave",	USessionLeave::StaticClass());
+	commandMapping.Add("playerJoin",	UPlayerJoin::StaticClass());
+	commandMapping.Add("playerUpdate",	UPlayerUpdate::StaticClass());
+	commandMapping.Add("playerLeave",	UPlayerLeave::StaticClass());
 }
 

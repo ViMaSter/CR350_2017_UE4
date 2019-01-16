@@ -42,20 +42,6 @@ public:
 	UPROPERTY(Category = Audio, EditAnywhere, BlueprintReadWrite)
 	class USoundBase* FireSound = nullptr;
 
-	/** Sound to play each time we fire */
-	UPROPERTY(Category = Websocket, EditAnywhere, BlueprintReadWrite)
-	FString Hostname;
-
-	/** Sound to play each time we fire */
-	UPROPERTY(Category = Websocket, EditAnywhere, BlueprintReadWrite)
-	int Port;
-
-	/** Sound to play each time we fire */
-	UPROPERTY(Category = Websocket, EditAnywhere, BlueprintReadWrite)
-	float UpdateFrequencyInSeconds;
-
-	int32 CurrentSessionID;
-
 	// Begin Actor Interface
 	virtual void Tick(float DeltaSeconds) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
@@ -63,27 +49,23 @@ public:
 
 	/* Fire a shot in the specified direction */
 	void FireShot(FVector FireDirection);
+	void SetMovement(float x, float y);
 
 	/* Handler for the fire timer expiry */
 	void ShotTimerExpired();
 
 	// Static names for axis bindings
-	static const FName MoveForwardBinding;
-	static const FName MoveRightBinding;
 	static const FName FireForwardBinding;
 	static const FName FireRightBinding;
 
 	// Begin Actor Interface
 	virtual void BeginPlay() override;
-	UFUNCTION()
-	void NetworkTick() const;
 	// End Actor Interface
 
 private:
 
-	// UEWebsocket websocketConnection;
-	class UWebSocketBase* websocketContext = nullptr;
-	FTimerHandle WebUpdateTimerHandle;
+	float X = 0.0f;
+	float Y = 0.0f;
 
 	/* Flag to control firing  */
 	uint32 bCanFire : 1;
