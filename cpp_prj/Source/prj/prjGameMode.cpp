@@ -37,7 +37,7 @@ void AprjGameMode::StartPlay()
 
 void AprjGameMode::SendNetworkMessage(const FString& data) const
 {
-	if (!connection || GetGameState<AprjGameStateBase>()->GetConnectionStatus() == EConnectionStatus::NO_CONNECTION)
+	if (!connection || !connection->IsValidLowLevel() || GetGameState<AprjGameStateBase>()->GetConnectionStatus() == EConnectionStatus::NO_CONNECTION)
 	{
 		UE_LOG(LogWindows, Warning, TEXT("Attempting to send the following message without a valid connection: '%s'"), *data);
 		return;
@@ -81,7 +81,7 @@ void AprjGameMode::OnMessage(const FString& data)
 
 	const FString command = JsonObject->GetStringField("command");
 	UCommand* commandObject = Cast<UCommand>(UWebSocketBlueprintLibrary::JsonToObject(data, commandMapping[command], true));
-	OnCommandReceived(commandObject);
+	OnWebsocketCommand.Broadcast(commandObject);
 }
 
 void AprjGameMode::OnCommandReceived(UCommand* command)

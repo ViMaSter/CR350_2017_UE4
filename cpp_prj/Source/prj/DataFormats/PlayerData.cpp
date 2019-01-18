@@ -8,11 +8,12 @@ UPlayerData::UPlayerData() {}
 
 UPlayerData::~UPlayerData() {}
 
-UPlayerData* UPlayerData::Create(FString name, float x, float y, int32 colorHex)
+UPlayerData* UPlayerData::Create(FString name, float ue4X, float ue4Y, int32 colorHex)
 {
 	UPlayerData* newObject(NewObject<UPlayerData>());
 	newObject->name = name;
-	newObject->position = ULowercaseVector2D::Create(x, y);
+	newObject->position = ULowercaseVector2D::Create(ue4X, ue4Y);
+	newObject->position->ToServerSpace();
 	newObject->colorHex = colorHex;
 	return newObject;
 }

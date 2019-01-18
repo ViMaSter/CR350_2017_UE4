@@ -44,7 +44,7 @@ void ALocalPlayerController::Tick(float DeltaSeconds)
 	// Find movement direction
 	const float ForwardValue = GetInputAxisValue(MoveForwardBinding);
 	const float RightValue = GetInputAxisValue(MoveRightBinding);
-	Cast<AprjPawn>(GetPawn())->SetMovement(RightValue, ForwardValue);
+	Cast<AprjPawn>(GetPawn())->SetMovement(ForwardValue, RightValue);
 
 	AttemptToUpdateNetwork();
 }
@@ -65,7 +65,7 @@ void ALocalPlayerController::AttemptToUpdateNetwork()
 
 	// Construct network message
 	FString resultString;
-	UWebSocketBlueprintLibrary::ObjectToJson(UUpdatePlayer::Create(UPlayerData::Create("UE4 Player", GetPawn()->GetActorLocation().Y / 100.0f, GetPawn()->GetActorLocation().X / 100.0f, 0x3F7AF3)), resultString);
+	UWebSocketBlueprintLibrary::ObjectToJson(UUpdatePlayer::Create(UPlayerData::Create("UE4 Player", GetPawn()->GetActorLocation().Y, GetPawn()->GetActorLocation().X, 0x3F7AF3)), resultString);
 	GetWorld()->GetAuthGameMode<AprjGameMode>()->SendNetworkMessage(resultString);
 
 	// Set flag to prevent too rapid of an update

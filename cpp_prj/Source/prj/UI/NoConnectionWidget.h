@@ -40,5 +40,5 @@ public:
 	UPROPERTY(Category = Websocket, EditAnywhere, BlueprintReadWrite)
 	FString LocalHostname = "127.0.0.1";
 	UPROPERTY(Category = Websocket, EditAnywhere, BlueprintReadWrite)
-	int LocalPort = 500;
+	int LocalPort = 7000;
 };

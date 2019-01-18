@@ -62,8 +62,8 @@ void AprjPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInputCompo
 void AprjPawn::Tick(float DeltaSeconds)
 {
 	// Find movement direction
-	const float RightValue = this->X;
-	const float ForwardValue = this->Y;
+	const float ForwardValue = this->X;
+	const float RightValue = this->Y;
 
 	// Clamp max size so that (X=1, Y=1) doesn't cause faster movement in diagonal directions
 	const FVector MoveDirection = FVector(ForwardValue, RightValue, 0.f).GetClampedToMaxSize(1.0f);

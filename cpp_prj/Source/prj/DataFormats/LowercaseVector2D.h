@@ -28,6 +28,22 @@ public:
 	float GetX() { return x; }
 	UFUNCTION(Category = Websocket)
 	float GetY() { return y; }
+
+	const float SERVER_SPACE_SCALE = 100;
+
+	// see http://www.cplusplus.com/forum/beginner/7469/#msg34877
+	inline void ToServerSpace()
+	{
+		this->x = this->x / SERVER_SPACE_SCALE;
+		this->y = this->y / SERVER_SPACE_SCALE;
+	}
+
+	// see http://www.cplusplus.com/forum/beginner/7469/#msg34877
+	inline void ToUE4Space()
+	{
+		this->x = this->x * SERVER_SPACE_SCALE;
+		this->y = this->y * SERVER_SPACE_SCALE;
+	}
 	
 	static ULowercaseVector2D* Create(float x, float y)
 	{

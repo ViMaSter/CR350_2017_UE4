@@ -12,6 +12,7 @@
 ARemotePlayerController::ARemotePlayerController()
 	: Super()
 {
+	
 }
 
 
@@ -44,16 +45,8 @@ void ARemotePlayerController::Tick(float DeltaSeconds)
 
 	FVector pawnPosition = GetPawn()->GetActorLocation();
 
-	float deltaX = FMath::Abs(targetX - pawnPosition.X);
-	float deltaY = FMath::Abs(targetY - pawnPosition.Y);
-	if (FMath::IsNearlyEqual(targetX, pawnPosition.X))
-	{
-		deltaX = 0;
-	}
-	if (FMath::IsNearlyEqual(targetY, pawnPosition.Y))
-	{
-		deltaY = 0;
-	}
+	float deltaX = FMath::Clamp<float>((targetX - pawnPosition.X) / 100, -1, 1);
+	float deltaY = FMath::Clamp<float>((targetY - pawnPosition.Y) / 100, -1, 1);
 
 	networkPlayerPawn->SetMovement(deltaX, deltaY);
 }
@@ -68,7 +61,11 @@ void ARemotePlayerController::OnCommandReceived(class UCommand* command)
 			return;
 		}
 
-		targetX = playerUpdate->player->position->GetX();
-		targetY = playerUpdate->player->position->GetY();
+		ULowercaseVector2D* positionCopy = DuplicateObject<ULowercaseVector2D>(playerUpdate->player->position, playerUpdate);
+		positionCopy->ToUE4Space();
+
+		// adjust for UE4 coordinate system
+		targetY = positionCopy->GetX();
+		targetX = positionCopy->GetY();
 	}
 }
