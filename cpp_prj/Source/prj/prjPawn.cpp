@@ -13,6 +13,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "Sound/SoundBase.h"
 
+const FName AprjPawn::MoveForwardBinding("MoveForward");
+const FName AprjPawn::MoveRightBinding("MoveRight");
 const FName AprjPawn::FireForwardBinding("FireForward");
 const FName AprjPawn::FireRightBinding("FireRight");
 
@@ -55,6 +57,8 @@ void AprjPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInputCompo
 	check(PlayerInputComponent);
 
 	// set up gameplay key bindings
+	PlayerInputComponent->BindAxis(MoveForwardBinding);
+	PlayerInputComponent->BindAxis(MoveRightBinding);
 	PlayerInputComponent->BindAxis(FireForwardBinding);
 	PlayerInputComponent->BindAxis(FireRightBinding);
 }
@@ -62,8 +66,8 @@ void AprjPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInputCompo
 void AprjPawn::Tick(float DeltaSeconds)
 {
 	// Find movement direction
-	const float ForwardValue = this->X;
-	const float RightValue = this->Y;
+	const float ForwardValue = GetInputAxisValue(MoveForwardBinding);
+	const float RightValue = GetInputAxisValue(MoveRightBinding);
 
 	// Clamp max size so that (X=1, Y=1) doesn't cause faster movement in diagonal directions
 	const FVector MoveDirection = FVector(ForwardValue, RightValue, 0.f).GetClampedToMaxSize(1.0f);
@@ -128,12 +132,6 @@ void AprjPawn::FireShot(FVector FireDirection)
 	}
 }
 
-void AprjPawn::SetMovement(float x, float y)
-{
-	this->X = x;
-	this->Y = y;
-}
-
 void AprjPawn::ShotTimerExpired()
 {
 	bCanFire = true;
@@ -143,4 +141,3 @@ void AprjPawn::BeginPlay()
 {
 	Super::BeginPlay();
 }
-

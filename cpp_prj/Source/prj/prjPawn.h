@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameFramework/Character.h"
 
 #include "prjPawn.generated.h"
 
@@ -13,15 +14,15 @@ class AprjPawn : public APawn
 
 	/* The mesh component */
 	UPROPERTY(Category = Mesh, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	class UStaticMeshComponent* ShipMeshComponent = nullptr;
+	class UStaticMeshComponent* ShipMeshComponent;
 
 	/** The camera */
 	UPROPERTY(Category = Camera, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	class UCameraComponent* CameraComponent = nullptr;
+	class UCameraComponent* CameraComponent;
 
 	/** Camera boom positioning the camera above the character */
 	UPROPERTY(Category = Camera, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	class USpringArmComponent* CameraBoom = nullptr;
+	class USpringArmComponent* CameraBoom;
 
 public:
 	AprjPawn();
@@ -40,7 +41,19 @@ public:
 
 	/** Sound to play each time we fire */
 	UPROPERTY(Category = Audio, EditAnywhere, BlueprintReadWrite)
-	class USoundBase* FireSound = nullptr;
+	class USoundBase* FireSound;
+
+	/** Sound to play each time we fire */
+	UPROPERTY(Category = Websocket, EditAnywhere, BlueprintReadWrite)
+	FString Hostname;
+
+	/** Sound to play each time we fire */
+	UPROPERTY(Category = Websocket, EditAnywhere, BlueprintReadWrite)
+	int Port;
+
+	/** Sound to play each time we fire */
+	UPROPERTY(Category = Websocket, EditAnywhere, BlueprintReadWrite)
+	float UpdateFrequencyInSeconds;
 
 	// Begin Actor Interface
 	virtual void Tick(float DeltaSeconds) override;
@@ -49,12 +62,13 @@ public:
 
 	/* Fire a shot in the specified direction */
 	void FireShot(FVector FireDirection);
-	void SetMovement(float x, float y);
 
 	/* Handler for the fire timer expiry */
 	void ShotTimerExpired();
 
 	// Static names for axis bindings
+	static const FName MoveForwardBinding;
+	static const FName MoveRightBinding;
 	static const FName FireForwardBinding;
 	static const FName FireRightBinding;
 
@@ -63,9 +77,6 @@ public:
 	// End Actor Interface
 
 private:
-
-	float X = 0.0f;
-	float Y = 0.0f;
 
 	/* Flag to control firing  */
 	uint32 bCanFire : 1;

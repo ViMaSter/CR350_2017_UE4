@@ -7,11 +7,7 @@
 		{
 			"Name": "prj",
 			"Type": "Runtime",
-			"LoadingPhase": "Default",
-			"AdditionalDependencies": [
-				"Engine",
-				"UMGEditor"
-			]
+			"LoadingPhase": "Default"
 		}
 	],
 	"Plugins": [
